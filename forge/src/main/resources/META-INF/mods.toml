@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+issueTrackerURL = "https://github.com/ExiledPomegranate/Barrel-Bombs/issues"
+license = "MIT"
+
+[[mods]]
+modId = "barrel_bombs"
+version = "${version}"
+displayName = "Barrel Bombs"
+authors = "ExiledPomegranate"
+description = '''
+Adds explosive barrels.
+'''
+logoFile = "assets/barrel_bombs/icon.png"
+
+[[dependencies.barrel_bombs]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.barrel_bombs]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.barrel_bombs]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.2.14,)"
+ordering = "AFTER"
+side = "BOTH"

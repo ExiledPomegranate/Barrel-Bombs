@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "barrel_bombs",
+  "version": "${version}",
+  "name": "Barrel Bombs",
+  "description": "Adds explosive barrels",
+  "authors": [
+    "ExiledPomegranate"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/project/barrel-bombs",
+    "sources": "https://github.com/ExiledPomegranate/Barrel-Bombs"
+  },
+  "license": "MIT",
+  "icon": "assets/barrel_bombs/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.exiledpomegranate.fabric.BarrelBombsFabric"
+    ],
+    "client": [
+      "com.exiledpomegranate.fabric.client.BarrelBombsFabricClient"
+    ],
+    "fabric-datagen": [
+      "com.exiledpomegranate.fabric.datagen.ModDatagen"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.20.1",
+    "java": ">=17",
+    "architectury": ">=9.2.14"
+  }
+}
