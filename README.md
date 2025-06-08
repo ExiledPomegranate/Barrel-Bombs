@@ -1,4 +1,4 @@
-Your New Favorite Mining Tool: The Barrel Bomb!
+Your New Favorite Excavation Tool: The Barrel Bomb!
 
 Inspired by [u/-C-7007's idea from r/MinecraftSuggestions](https://www.reddit.com/r/minecraftsuggestions/comments/1kmrqhx/explosive_barrel_a_better_explosive_for_tunnels/)
 
