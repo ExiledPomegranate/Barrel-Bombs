@@ -1,5 +1,6 @@
 package com.exiledpomegranate;
 
+import com.exiledpomegranate.items.Additives;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
@@ -60,29 +61,30 @@ public class BarrelBombExplosion extends Explosion {
     private final ObjectArrayList<BlockPos> affectedBlocks;
     private final Map<PlayerEntity, Vec3d> affectedPlayers;
     private final Vec3d direction;
-    private final int extraBlazePowder;
+    private final Map<String, Integer> additives;
 
-    public BarrelBombExplosion(World world, @Nullable Entity entity, double x, double y, double z, float power, Vec3d direction, List<BlockPos> affectedBlocks, int extraGunpowder, int extraBlazePowder) {
-        this(world, entity, x, y, z, power, false, Explosion.DestructionType.DESTROY_WITH_DECAY, direction, affectedBlocks, extraGunpowder, extraBlazePowder);
+    public BarrelBombExplosion(World world, @Nullable Entity entity, double x, double y, double z, float power, Vec3d direction, List<BlockPos> affectedBlocks, Map<String, Integer> additives) {
+        this(world, entity, x, y, z, power, false, Explosion.DestructionType.DESTROY_WITH_DECAY, direction, affectedBlocks, additives);
     }
 
-    public BarrelBombExplosion(World world, @Nullable Entity entity, double x, double y, double z, float power, boolean createFire, Explosion.DestructionType destructionType, Vec3d direction, List<BlockPos> affectedBlocks, int extraGunpowder, int extraBlazePowder) {
-        this(world, entity, x, y, z, power, createFire, destructionType, direction, extraGunpowder, extraBlazePowder);
+    public BarrelBombExplosion(World world, @Nullable Entity entity, double x, double y, double z, float power, boolean createFire, Explosion.DestructionType destructionType, Vec3d direction, List<BlockPos> affectedBlocks, Map<String, Integer> additives) {
+        this(world, entity, x, y, z, power, createFire, destructionType, direction, additives);
         this.affectedBlocks.addAll(affectedBlocks);
     }
 
-    public BarrelBombExplosion(World world, @Nullable Entity entity, double x, double y, double z, float power, boolean createFire, Explosion.DestructionType destructionType, Vec3d direction, int extraGunpowder, int extraBlazePowder) {
-        this(world, entity, null, null, x, y, z, power, createFire, destructionType, direction, extraGunpowder, extraBlazePowder);
+    public BarrelBombExplosion(World world, @Nullable Entity entity, double x, double y, double z, float power, boolean createFire, Explosion.DestructionType destructionType, Vec3d direction, Map<String, Integer> additives) {
+        this(world, entity, null, null, x, y, z, power, createFire, destructionType, direction, additives);
     }
 
-    public BarrelBombExplosion(World world, @Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, Explosion.DestructionType destructionType, Vec3d direction, int extraGunpowder, int extraBlazePowder) {
+    public BarrelBombExplosion(World world, @Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, Explosion.DestructionType destructionType, Vec3d direction, Map<String, Integer> additives) {
         super(world, entity, damageSource, behavior, x, y, z, power, createFire, destructionType);
         this.random = Random.create();
         this.affectedBlocks = new ObjectArrayList<>();
         this.affectedPlayers = Maps.newHashMap();
+        this.additives = additives;
         this.world = world;
         this.entity = entity;
-        this.power = modifyPower(power, extraGunpowder);
+        this.power = Additives.modifyPower(this.additives, power);
         this.x = x;
         this.y = y;
         this.z = z;
@@ -91,11 +93,6 @@ public class BarrelBombExplosion extends Explosion {
         this.damageSource = damageSource == null ? world.getDamageSources().explosion(this) : damageSource;
         this.behavior = behavior == null ? this.chooseBehavior(entity) : behavior;
         this.direction = direction;
-        this.extraBlazePowder = extraBlazePowder;
-    }
-
-    private static float modifyPower(float power, int extraGunpowder) {
-        return (float) (0.6 * Math.pow(extraGunpowder, 0.9) + power);
     }
 
     public static Vec3d VecItoD(Vec3i direction) {
@@ -156,7 +153,7 @@ public class BarrelBombExplosion extends Explosion {
     public void kaboom() {
         this.collectBlocks();
         Vec3d position = getPos();
-        int x = modifyDirectionalOffset(ConfigHandler.config().directionalOffset, this.extraBlazePowder);
+        int x = Additives.modifyDirectionalOffset(this.additives, ConfigHandler.config().directionalOffset);
         for (int i = 0; i < x; i++) {
             updatePos(position.add(this.direction.multiply(i + 1)));
             this.collectBlocks();

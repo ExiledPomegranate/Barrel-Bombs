@@ -2,6 +2,7 @@ package com.exiledpomegranate;
 
 import com.exiledpomegranate.blocks.BlockInit;
 import com.exiledpomegranate.entities.EntityInit;
+import com.exiledpomegranate.items.Additives;
 import com.exiledpomegranate.items.ItemInit;
 import dev.architectury.event.events.common.CommandRegistrationEvent;
 import dev.architectury.event.events.common.LifecycleEvent;
@@ -16,8 +17,10 @@ public final class BarrelBombs {
     public static final Supplier<RegistrarManager> MANAGER = Suppliers.memoize(() -> RegistrarManager.get(MOD_ID));
 
     public static void init() {
+        Additives.init();
         ItemInit.init();
         BlockInit.init();
+        BlockInit.BLOCK_ENTITIES.register();
         EntityInit.init();
         ConfigHandler.load(Platform.getConfigFolder());
         LifecycleEvent.SERVER_STOPPING.register(server -> ConfigHandler.save(Platform.getConfigFolder()));

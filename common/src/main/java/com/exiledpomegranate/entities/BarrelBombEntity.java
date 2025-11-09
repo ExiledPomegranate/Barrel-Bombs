@@ -22,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.sound.SoundCategory;
 
+import java.util.Map;
+
 import static com.exiledpomegranate.BarrelBombExplosion.VecItoD;
 
 public class BarrelBombEntity extends Entity implements Ownable {
@@ -32,8 +34,7 @@ public class BarrelBombEntity extends Entity implements Ownable {
     @Nullable
     private LivingEntity causingEntity;
     private boolean kaboomed = false;
-    private int extraGunpowder;
-    private int extraBlazePowder;
+    private Map<String, Integer> additives;
 
     public BarrelBombEntity(EntityType<? extends BarrelBombEntity> type, World world) {
         super(type, world);
@@ -41,7 +42,7 @@ public class BarrelBombEntity extends Entity implements Ownable {
     }
 
     public BarrelBombEntity(World world, double x, double y, double z, Direction facing,
-                            @Nullable LivingEntity igniter, int extraGunpowder, int extraBlazePowder) {
+                            @Nullable LivingEntity igniter, Map<String, Integer> additives) {
         this(EntityInit.BARREL_BOMB_ENTITY.get(), world);
         this.setPosition(x, y, z);
         this.setFuse(DEFAULT_FUSE);
@@ -50,8 +51,7 @@ public class BarrelBombEntity extends Entity implements Ownable {
         this.prevZ = z;
         setFacing(facing);
         this.causingEntity = igniter;
-        this.extraGunpowder = extraGunpowder;
-        this.extraBlazePowder = extraBlazePowder;
+        this.additives = additives;
     }
 
     @Override
@@ -135,9 +135,9 @@ public class BarrelBombEntity extends Entity implements Ownable {
         playKaboomSound(this.getWorld(), this.getPos(), this.random);
 
         BarrelBombExplosion explosion = new BarrelBombExplosion(this.getWorld(), this, this.getX(),
-                this.getBodyY(0.0625), this.getZ(), ConfigHandler.config().power, false,
-                Explosion.DestructionType.DESTROY, VecItoD(Direction.byId(this.dataTracker.get(FACING)).getVector()),
-                this.extraGunpowder, this.extraBlazePowder);
+                this.getBodyY(0.0625), this.getZ(), ConfigHandler.config().power,
+                false, Explosion.DestructionType.DESTROY,
+                VecItoD(Direction.byId(this.dataTracker.get(FACING)).getVector()), additives);
         explosion.kaboom();
     }
 
@@ -155,6 +155,11 @@ public class BarrelBombEntity extends Entity implements Ownable {
     protected void writeCustomDataToNbt(NbtCompound nbt) {
         nbt.putShort("Fuse", (short) this.getFuse());
         nbt.putInt("Facing", this.dataTracker.get(FACING));
+        NbtCompound additivesNBT = new NbtCompound();
+        for (Map.Entry<String, Integer> additive : additives.entrySet()) {
+            additivesNBT.putInt(additive.getKey(), additive.getValue());
+        }
+        nbt.put("additives", additivesNBT);
     }
 
     @Override
@@ -162,6 +167,10 @@ public class BarrelBombEntity extends Entity implements Ownable {
         this.setFuse(nbt.getShort("Fuse"));
         if (nbt.contains("Facing", NbtElement.INT_TYPE)) {
             this.dataTracker.set(FACING, nbt.getInt("Facing"));
+        }
+        NbtCompound additivesNBT = nbt.getCompound("additives");
+        for (String key : additivesNBT.getKeys()) {
+            additives.put(key, additivesNBT.getInt(key));
         }
     }
 

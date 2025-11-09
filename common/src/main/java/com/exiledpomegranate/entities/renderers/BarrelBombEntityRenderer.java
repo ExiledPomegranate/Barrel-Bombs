@@ -43,7 +43,7 @@ public class BarrelBombEntityRenderer extends EntityRenderer<BarrelBombEntity> {
         matrixStack.translate(-0.5F, -0.5F, 0.5F);
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90.0F));
         TntMinecartEntityRenderer.renderFlashingBlock(this.blockRenderManager,
-                BlockInit.BARRELBOMBBLOCK.get().getDefaultState().with(Properties.FACING, barrelBomb.getFacing()),
+                BlockInit.BARREL_BOMB_BLOCK.get().getDefaultState().with(Properties.FACING, barrelBomb.getFacing()),
                 matrixStack, vertexConsumerProvider, i, j / 5 % 2 == 0);
         matrixStack.pop();
         super.render(barrelBomb, f, g, matrixStack, vertexConsumerProvider, i);
